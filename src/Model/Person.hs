@@ -13,13 +13,9 @@ data Person = Person
 
 instance FromCsvRow Person where
   fromCsvRow row = case row of
-    [firstNameRaw, lastNameRaw, ageRaw, heightRaw] -> do
-      age <- fromCsv ageRaw
-      height <- fromCsv heightRaw
-      pure Person
-        { personFirstName = firstNameRaw
-        , personLastName  = lastNameRaw
-        , personAge       = age
-        , personHeight    = height
-        }
+    [firstNameRaw, lastNameRaw, ageRaw, heightRaw] -> Person
+      <$> pure firstNameRaw
+      <*> pure lastNameRaw
+      <*> fromCsv ageRaw
+      <*> fromCsv heightRaw
     _ -> Left $ "Couldn't parse Person: incorrect number of fields: " <> tshow row
