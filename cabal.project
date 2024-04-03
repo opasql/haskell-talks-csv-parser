@@ -1,0 +1,3 @@
+optimization: False
+packages: csv-parser.cabal
+with-compiler: ghc-9.0.2
