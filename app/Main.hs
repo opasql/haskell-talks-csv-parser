@@ -10,5 +10,5 @@ main :: IO ()
 main = do
   input <- Text.IO.readFile "persons.csv"
   case Csv.parse input :: Either Text [Person] of
-    Left e       -> Text.IO.putStrLn $ "Parsing failure: " <> e
-    Right person -> Text.IO.putStrLn $ tshow person
+    Left e        -> Text.IO.putStrLn $ "Parsing failure: " <> e
+    Right persons -> Text.IO.putStrLn $ tshow persons
