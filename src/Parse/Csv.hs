@@ -1,5 +1,6 @@
 module Parse.Csv where
 
+import           Control.Applicative
 import qualified Data.Attoparsec.Text as Atto
 import           Data.Functor         ((<&>))
 import           Data.Text            hiding (filter)
@@ -16,6 +17,12 @@ instance FromCsv Int where
 
 instance FromCsv Double where
   fromCsv = runParser (Atto.double <* Atto.endOfInput)
+
+instance FromCsv Bool where
+  fromCsv = runParser $ (trueP <|> falseP) <* Atto.endOfInput
+    where
+      trueP = Atto.asciiCI "true" *> pure True
+      falseP = Atto.asciiCI "false" *> pure False
 
 class FromCsvRow a where
   fromCsvRow :: [Text] -> Either Text a
