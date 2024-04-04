@@ -21,6 +21,9 @@ library
     exposed-modules:  MyLib
                     , Parse.Csv
                     , Model.Person
+                    , Model.Car
+                    , Parse.Tanya
+                    , Parse.Valeri
                     , Util
 
     -- other-modules:

@@ -1,8 +1,6 @@
 module Model.Car where
 
 import           Data.Text
-import           Parse.Csv
-import           Util
 
 data Car = Car
   { carManufacturer :: Text
