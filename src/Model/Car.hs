@@ -29,7 +29,7 @@ newtype Milage = Milage { unMilage :: Double }
 newtype Price = Price { unPrice :: Double }
   deriving Show
 
-newtype HadAccidents = HadAccidents { unHadAccidents :: Double }
+newtype HadAccidents = HadAccidents { unHadAccidents :: Bool }
   deriving Show
 
 data Color =
