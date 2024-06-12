@@ -44,7 +44,7 @@ parseRows input = runParser parseLines input <&> \a ->
     parseLine = Atto.sepBy parseField (Atto.char ',')
 
     parseField :: Atto.Parser Text
-    parseField = Atto.takeWhile1 (\c -> c /= ',' && c /= '\n')
+    parseField = Atto.takeWhile (\c -> c /= ',' && c /= '\n')
 
 parse :: FromCsvRow a => Text -> Either Text [a]
 parse input = parseRows input >>= traverse fromCsvRow
