@@ -6,8 +6,8 @@ import           Control.Applicative
 import qualified Data.Attoparsec.Text as Atto
 import           Data.Functor         ((<&>))
 import           Data.Text            hiding (filter)
-import           Prelude
 import           Model.Car
+import           Prelude
 
 class FromCsv a where
   fromCsv :: Text -> Either Text a
@@ -63,21 +63,39 @@ runParser p i = case Atto.parseOnly p i of
 
 -- Valeri's changes
 
+-- FIXME:
+-- 1. Переиспользовать инстанс Double
+-- 2. Валидировать Price
 instance FromCsv Price where
-  fromCsv = fmap Price . runParser (Atto.double <* Atto.endOfInput)
+  fromCsv t = case fromCsv t :: Either Text Double of
+    Left e -> Left e
+    Right d ->
+      if d < 0
+      then Left $ "Negative price: " <> t
+      else Right $ Price d
 
+-- FIXME:
+-- 1. Переиспользовать инстанс Bool
+-- Type inference
 instance FromCsv HadAccidents where
-  fromCsv = fmap HadAccidents . runParser parseBool
+  fromCsv = fmap HadAccidents . fromCsv
 
-parseBool :: Atto.Parser Bool
-parseBool = (trueP <|> falseP) <* Atto.endOfInput
-  where
-    trueP = Atto.asciiCI "true" *> pure True
-    falseP = Atto.asciiCI "false" *> pure False
+-- Не нужно выносить логику
+-- parseBool :: Atto.Parser Bool
+-- parseBool = (trueP <|> falseP) <* Atto.endOfInput
+--   where
+--     trueP = Atto.asciiCI "true" *> pure True
+--     falseP = Atto.asciiCI "false" *> pure False
 
+-- FIXME:
+-- 1. Переиспользовать инстанс Double
+-- 2. Валидировать Milage
 instance FromCsv Milage where
   fromCsv = fmap Milage . runParser (Atto.double <* Atto.endOfInput)
 
+-- FIXME:
+-- 1. Переиспользовать инстанс Double
+-- 2. Валидировать Year
 instance FromCsv Year where
   fromCsv = fmap Year . runParser (Atto.signed Atto.decimal <* Atto.endOfInput)
 
@@ -85,17 +103,10 @@ instance FromCsv Color where
   fromCsv = runParser parseColor
 
 parseColor :: Atto.Parser Color
-parseColor = Atto.choice
-  [ Atto.asciiCI "white" *> pure White
-  , Atto.asciiCI "black" *> pure Black
-  , Atto.asciiCI "red" *> pure Red
-  , Atto.asciiCI "orange" *> pure Orange
-  , Atto.asciiCI "yellow" *> pure Yellow
-  , Atto.asciiCI "green" *> pure Green
-  , Atto.asciiCI "blue" *> pure Blue
-  , Atto.asciiCI "purple" *> pure Purple
-  , Atto.asciiCI "brown" *> pure Brown
-  ] <|> (Atto.takeText >>= \col -> fail $ "Unknown color: " ++ unpack col)
+parseColor = Atto.choice (fmap f [minBound..maxBound])
+  <|> (Atto.takeText >>= \col -> fail $ "Unknown color: " ++ unpack col)
+  where
+    f color = Atto.asciiCI (renderColor color) *> pure color
 
 instance FromCsv UsedOrNew where
   fromCsv = runParser parseUsedOrNew
@@ -106,7 +117,11 @@ parseUsedOrNew = Atto.choice
   , Atto.asciiCI "new" *> pure New
   ] <|> (Atto.takeText >>= \uon -> fail $ "Unknown UsedOrNew: " ++ unpack uon)
 
-instance FromCsv (Maybe Text) where
-  fromCsv txt
-    | Data.Text.strip txt == "" = Right Nothing
-    | otherwise = Right (Just txt)
+-- instance FromCsv (Maybe Text) where
+--   fromCsv txt
+--     | Data.Text.strip txt == "" = Right Nothing
+--     | otherwise = Right (Just txt)
+
+instance FromCsv a => FromCsv (Maybe a) where
+  fromCsv "" = Right Nothing
+  fromCsv t  = Just <$> fromCsv t

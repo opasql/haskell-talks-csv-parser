@@ -1,9 +1,9 @@
 module Parse.Valeri where
 
 import           Control.Applicative
-import           Prelude
 import           Model.Car
 import           Parse.Csv
+import           Prelude
 import           Util
 
 instance FromCsvRow Car where

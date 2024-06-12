@@ -1,3 +1,5 @@
+{-# LANGUAGE LambdaCase #-}
+
 module Model.Car where
 
 import           Data.Text
@@ -20,9 +22,12 @@ data Car = Car
     -- ^ Price can't be negative
   } deriving Show
 
+-- Car :: Text -> Text -> Maybe Text -> Year -> Milage
+
 newtype Year = Year { unYear :: Int }
   deriving Show
 
+-- | Milage is a non-negative double value.
 newtype Milage = Milage { unMilage :: Double }
   deriving Show
 
@@ -42,7 +47,21 @@ data Color =
   | Blue
   | Purple
   | Brown
-  deriving Show
+  | Rainbow
+  deriving (Show, Eq, Ord, Enum, Bounded)
+
+renderColor :: Color -> Text
+renderColor = \case
+  White   -> "white"
+  Black   -> "black"
+  Red     -> "red"
+  Orange  -> "orange"
+  Yellow  -> "yellow"
+  Green   -> "green"
+  Blue    -> "blue"
+  Purple  -> "purple"
+  Brown   -> "brown"
+  Rainbow -> "rainbow"
 
 data UsedOrNew = Used | New
   deriving Show

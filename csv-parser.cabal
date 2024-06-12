@@ -42,6 +42,7 @@ executable csv-parser
     build-depends: base
                   , csv-parser
                   , text
+                  , pretty-simple
 
     hs-source-dirs:   app
     default-language: Haskell2010
